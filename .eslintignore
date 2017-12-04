@@ -1,0 +1,6 @@
+**/node_modules/**
+**/bower_components/**
+**/android/**
+**/ios/**
+**/server/**
+**/__tests__/**

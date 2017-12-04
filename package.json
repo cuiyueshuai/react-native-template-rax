@@ -1,0 +1,23 @@
+{
+  "name": "react-native-template-rax",
+  "version": "1.0.3",
+  "description": "react native template of rax",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cuiyueshuai/react-native-template-rax.git"
+  },
+  "keywords": [
+    "template",
+    "react native"
+  ],
+  "author": "cuiyueshuai",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cuiyueshuai/react-native-template-rax/issues"
+  },
+  "homepage": "https://github.com/cuiyueshuai/react-native-template-rax#readme"
+}

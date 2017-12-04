@@ -1,0 +1,63 @@
+{
+  "root": true,
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "mocha": true
+  },
+  "rules": {
+    "arrow-body-style": ["warn", "as-needed", { "requireReturnForObjectLiteral": true }],
+    "arrow-parens": ["off"],
+    "comma-dangle": ["warn", "only-multiline"],
+    "class-methods-use-this": ["warn"],
+    "dot-notation": [
+      "warn"
+    ],
+    "global-require": ["warn"],
+    "import/no-unresolved": ["error", { "ignore": ['\.img$', '\.png$', "NativeModules"] }],
+    "import/imports-first": ["off"],
+    "import/newline-after-import": ["off"],
+    "import/no-extraneous-dependencies": ["warn"],
+    "import/prefer-default-export": ["warn"],
+    "max-len": ["error", 120, 2],
+    "new-cap": ["error", { "capIsNewExceptions": [] }],
+    "no-param-reassign": ["error", { "props": false }],
+    "no-trailing-spaces": ["error", { "skipBlankLines": true }],
+    "no-underscore-dangle": ["off", { "allowAfterThis": true }],
+    "no-unused-expressions": ["error", { "allowShortCircuit": true }],
+    "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "caughtErrors": "none" }],
+    "no-plusplus": ["off"],
+    "no-useless-concat": ["off"],
+    "no-mixed-operators": ["off"],
+    "no-string-refs": ["off"],
+    "no-extra-boolean-cast": ["off"],
+    "no-lonely-if": ["off"],
+    "object-shorthand": ["warn"],
+    "object-property-newline": ["off"],
+    "padded-blocks": ["error", "never"],
+    "prefer-template": ["off"],
+    "quote-props": ["error", "consistent-as-needed", { "keywords": true }],
+    "react/jsx-boolean-value": ["error", "always"],
+    "react/jsx-pascal-case": ["warn", { "ignore": ["IM"] }],
+    "react/prop-types": ["warn", { "ignore": ["navigator", "exec", "children", "style", "param"] }],
+    "react/sort-comp": ["warn", { "order": [ "static-methods", "/^_getStateFromStores$/", "constructor" ]}],
+    "react/jsx-space-before-closing": ["warn", "always"],
+    "react/jsx-filename-extension": ["off"],
+    "react/forbid-prop-types": ["off"],
+    "react/no-string-refs": ["off"],
+    "react/no-array-index-key": ["off"],
+    "react/no-unused-prop-types": ["off"],
+    "react/require-default-props": ["off"],
+    "react/jsx-wrap-multilines": ["off"]
+  }
+}
