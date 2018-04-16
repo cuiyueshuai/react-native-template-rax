@@ -26,7 +26,7 @@ const LocalKeyStore = {
           if (callback) callback(null);
         }
       });
-    } else {//eslint-disable-line
+    } else { // eslint-disable-line
       // deleting it
       // TODO: what if it's not there? does it error
       return AsyncStorage.removeItem(keyName, (error) => { // callback: error

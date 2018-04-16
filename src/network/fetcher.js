@@ -4,24 +4,30 @@
  */
 
 import Qs from 'qs';
+import axios from 'axios';
 import { NetInfo } from 'react-native';
-import MxFetch from './mxFetch';
-import DataUtil from '../utilities/dataUtil';
+import { Host } from './netConfig';
+
+axios.defaults.baseURL = Host;
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+axios.defaults.headers['Accept'] = 'application/json';
+axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.xsrfHeaderName = 'X-SESSION-TOKEN';
+axios.defaults.timeout = 30000;
 
 let netState = false;
-let cookie = '';
+let token;
 
-/* eslint-disable */
+const _handleConnectivityChange = (isConnected) => {
+  netState = isConnected;
+};
+
 const initNetworkState = () => {
   NetInfo.isConnected.addEventListener(
     'connectionChange',
     _handleConnectivityChange
   );
-  NetInfo.isConnected.fetch().then(
-    (isConnected) => {
-      netState = isConnected;
-    }
-  );
+  NetInfo.isConnected.fetch().then((isConnected) => { netState = isConnected; });
 };
 
 const removeNetworkStateListener = () => {
@@ -31,152 +37,121 @@ const removeNetworkStateListener = () => {
   );
 };
 
-const _handleConnectivityChange = (isConnected) => {
-  netState = isConnected;
-};
-
-const _cookieHandler = (res) => {
-  const sessionHeader = res.headers;
-  const set_cookie = DataUtil.stringSplitHandler(sessionHeader.map['set-cookie'] + '',
-    'JSESSIONID');
-  const x_session_token = DataUtil.stringSplitHandler(sessionHeader.map['set-cookie'] + '',
-    'X-SESSION-TOKEN');
-  if (set_cookie && x_session_token) {
-    cookie = set_cookie + '; ' + x_session_token.split('HttpOnly, ').pop();
-  }
-};
-
-const process = (_promise, option) => {
+const process = (_promise) => {
   return new Promise((resolve, reject) => {
     _promise.then((response) => {
-      if (response.headers.map['set-cookie']) {
-        _cookieHandler(response)
-      }
-
-      const status = response.status;
-      switch (parseInt(status / 100)) {
-        case 2:
-          return response.text();
-        case 3:
-          break;
-        case 4:
-          if (status === 401) {
-            throw new Error('401');
-          } else {
-            throw new Error('40X');
-          }
-          break;
-        case 5:
-          throw new Error('5XX');
-          break;
-        default:
-          throw new Error('Unknown Error');
-          break;
-      }
-    })
-      .then((response) => {
-        const json = JSON.parse(response);
-        if (response === '') {
-          resolve({});
-        } else if(json.body){
-          resolve(json.body);
-        } else {
-          resolve(json);
-        }
-      })
-      .catch((error) => {
-        reject(error);
-      });
+      return response.data;
+    }).then((json) => {
+      if (json['X-SESSION-TOKEN']) token = json['X-SESSION-TOKEN'];
+      resolve(json || {});
+    }).catch((error) => {
+      const responseX = error.response;
+      if (responseX && responseX.status === 401) return reject(new Error('会话已过期'));
+      else if (error.code && error.code === 'ECONNABORTED') return reject(new Error('请求超时'));
+      return reject(error);
+    });
   });
 };
-/* eslint-disable */
 
-const rawFetch = (url, param, option) => {
-  // console.log('以下打印一次传出去的param:');
-  // console.log(param);
-  // console.log('请求地址:' + url);
-
-  if (netState) {
-    const _promise = Promise.race([MxFetch.fetch(url, param, 6180), new Promise((resolve, reject) => {
-      setTimeout(() => reject(new Error('链接超时')), 60000);
-    })]);
-
-    return process(_promise, option);
-  } else {
-    return Promise.reject(new Error('无网络连接,请检查网络设置'));
-  }
-};
-
-const _getHeader = () => {
-  return {
-    'Accept': 'application/json',
-    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    'Cookie': cookie
-  };
+const rawFetch = (url, param) => {
+  // if (!netState) return Promise.reject(new Error('无网络连接,请检查网络设置'));
+  const axiosFetcher = axios.create(param);
+  return process(axiosFetcher(url, param));
 };
 
 const getFetch = (url, param, header, option) => {
   const headers = {
-    ..._getHeader(),
-    ...header
+    'Content-Type': 'application/json; charset=UTF-8',
+    'X-SESSION-TOKEN': token,
+    ...header,
   };
+  const timestamp = new Date().getTime();
+  const paramX = { ...param, _: timestamp };
+  const urlTemp = url + '?' + Qs.stringify(paramX);
 
-  const urlTemp = url + '?' + Qs.stringify(param);
   return rawFetch(urlTemp, {
-    method: 'GET',
+    method: 'get',
     headers,
   }, option);
 };
 
-const postQsBodyFetch = (url, param, header, option) => {
+const postQsFetch = (url, param, header, option) => {
   const headers = {
-    ..._getHeader(),
-    ...header
+    'X-SESSION-TOKEN': token,
+    ...header,
   };
+  const timestamp = new Date().getTime();
+  const paramX = { _: timestamp };
+  const urlTemp = url + '?' + Qs.stringify(paramX);
 
-  return rawFetch(url, {
-    method: 'POST',
+  return rawFetch(urlTemp, {
+    method: 'post',
     headers,
-    body: Qs.stringify(param)
+    data: param,
+    transformRequest: [(data) => Qs.stringify(data)]
   }, option);
 };
 
-const postStrBodyFetch = (url, param, header, option) => {
+const postJsonFetch = (url, param, header, option) => {
   const headers = {
-    ..._getHeader(),
-    ...header
+    'Content-Type': 'application/json; charset=UTF-8',
+    'X-SESSION-TOKEN': token,
+    ...header,
   };
+  const timestamp = new Date().getTime();
+  const paramX = { _: timestamp };
+  const urlTemp = url + '?' + Qs.stringify(paramX);
 
-  return rawFetch(url, {
-    method: 'POST',
+  return rawFetch(urlTemp, {
+    method: 'post',
     headers,
-    body: JSON.stringify(param),
+    data: JSON.stringify(param),
   }, option);
 };
 
 const uploadFileFetch = (url, param, header, option) => {
   const headers = {
-    ..._getHeader(),
     'Content-Type': 'multipart/form-data',
+    'X-SESSION-TOKEN': token,
     ...header
   };
+  const timestamp = new Date().getTime();
+  const paramX = { _: timestamp };
+  const urlTemp = url + '?' + Qs.stringify(paramX);
 
-  const formData = new FormData();
-  formData.append('file', param);
-  formData.append('fileSize',param.size);
-
-  return rawFetch(url, {
-    method: 'POST',
+  return rawFetch(urlTemp, {
+    method: 'post',
     headers,
-    body: formData,
+    data: param,
+    transformRequest: [(data) => {
+      const formData = new FormData();
+      formData.append('file', data);
+      formData.append('fileSize', data.size);
+      return formData;
+    }]
+  }, option);
+};
+
+const postURLBodyFetch = (url, urlParam, bodyParam, header, option) => {
+  const headers = header;
+  const timestamp = new Date().getTime();
+  const paramX = { ...urlParam, _: timestamp };
+  const urlTemp = url + '?' + Qs.stringify(paramX);
+
+  return rawFetch(urlTemp, {
+    method: 'post',
+    headers,
+    data: bodyParam,
+    transformRequest: [(data) => Qs.stringify(data)]
   }, option);
 };
 
 export default {
   getFetch,
-  postQsBodyFetch,
-  postStrBodyFetch,
+  postQsFetch,
+  postJsonFetch,
   uploadFileFetch,
+  postURLBodyFetch,
   initNetworkState,
   removeNetworkStateListener,
 };

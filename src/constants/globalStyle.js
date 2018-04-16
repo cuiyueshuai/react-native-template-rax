@@ -9,13 +9,6 @@ const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 const _colorSet = {
   mainColor: '#38568d',
-  normalFontColor: '#222',
-  weakFontColor: '#AEAEAE',
-  pageBackground: '#E7E7E7',
-  lineColor: '#E4E4E4',
-  grayColor: '#c7d2da',
-  tabInacColor: '#929292',
-  tabBGColor: '#F9F9F9',
   orangeColor: '#f59c1b',
   greenColor: '#86c036',
   weakBlueColor: '#5bc0de',

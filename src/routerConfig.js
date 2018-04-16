@@ -2,16 +2,16 @@
  * Created by dpcui on 29/11/2017.
  */
 
-import Login from './pages/login';
-import Home from './pages/home';
+import OnePage from './pages/one';
+import TwoPage from './pages/two';
 
 const stackConfig = {
-  Login: { screen: Login },
-  Home: { screen: Home }
+  OnePage: { screen: OnePage },
+  TwoPage: { screen: TwoPage }
 };
 
 const stackNavigatorConfig = {
-  initialRouteName: 'Login',
+  initialRouteName: 'OnePage',
   navigationOptions: {
     headerBackTitle: null,
     headerTintColor: 'white',
@@ -19,15 +19,11 @@ const stackNavigatorConfig = {
     swipeEnabled: false,
     animationEnabled: false,
     headerStyle: {
-      backgroundColor: '#AEAEAE'
+      backgroundColor: '#38568d',
     }
   },
   mode: 'card',
-  paths: 'rax/: Login',
   headerMode: 'float',
-  transitionConfig: () => {},
-  onTransitionStart: () => {},
-  onTransitionEnd: () => {}
 };
 
 export {

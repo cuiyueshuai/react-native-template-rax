@@ -12,20 +12,17 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import dismissKeyboard from 'react-native-dismiss-keyboard';
-import { StackNavigator, NavigationActions, addNavigationHelpers } from 'react-navigation';
-import DictStyle from './constants/styleDict';
+import { StackNavigator, addNavigationHelpers } from 'react-navigation';
+import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
+import DictStyle from './constants/globalStyle';
 import { stackConfig, stackNavigatorConfig } from './routerConfig';
-import Loading from './components/loading/loadingView';
 
 const AppNavigator = StackNavigator(stackConfig, stackNavigatorConfig);// eslint-disable-line
+const addListener = createReduxBoundAddListener('app');
 
 class RouterManager extends Component {
   constructor(props) {
     super(props);
-    this.resetRouteTo = this.resetRouteTo.bind(this);
-    this.resetActiveRouteTo = this.resetActiveRouteTo.bind(this);
-    this.backTo = this.backTo.bind(this);
-    this.setParamsWrapper = this.setParamsWrapper.bind(this);
     this.state = {};
   }
 
@@ -45,8 +42,7 @@ class RouterManager extends Component {
     const { navigationState } = this.props;
 
     if (navigationState.index > 0) {
-      const previousRoute = navigationState.routes[navigationState.index - 1];
-      this.backTo(previousRoute.routeName);
+      this.props.navigation.goBack();
       return true;
     } else { // eslint-disable-line
       if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {
@@ -58,56 +54,6 @@ class RouterManager extends Component {
       return true;
     }
   };
-
-  resetRouteTo(route, params) {
-    const { dispatch } = this.props;
-    if (dispatch) {
-      dispatch(
-        NavigationActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: route, params })],
-        })
-      );
-    }
-  }
-
-  resetActiveRouteTo(routeArray, activeIndex) {
-    const { dispatch } = this.props;
-    if (dispatch) {
-      const actionsArray = [];
-      for (let i = 0; i < routeArray.length; i++) {
-        actionsArray.push(NavigationActions.navigate({ routeName: routeArray[i] }));
-      }
-
-      const resetAction = NavigationActions.reset({
-        index: activeIndex,
-        actions: actionsArray,
-      });
-      dispatch(resetAction);
-    }
-  }
-
-  backTo(routeName) {
-    const { dispatch } = this.props;
-    if (dispatch) {
-      dispatch(
-        NavigationActions.back({
-          routeName: routeName
-        })
-      );
-    }
-  }
-
-  setParamsWrapper(params, routeName) {
-    const { dispatch } = this.props;
-    if (dispatch) {
-      const setParamsAction = NavigationActions.setParams({
-        params: params,
-        routeName: routeName
-      });
-      dispatch(setParamsAction);
-    }
-  }
 
   render() {
     const { dispatch, navigationState, screenProps } = this.props;
@@ -121,18 +67,9 @@ class RouterManager extends Component {
           navigation={addNavigationHelpers({
             dispatch,
             state: navigationState,
-            resetRouteTo: (route, params) => this.resetRouteTo(route, params),
-            resetActiveRouteTo: (routeArray, activeIndex) => this.resetActiveRouteTo(routeArray, activeIndex),
-            backTo: (key) => this.backTo(key),
-            setParamsWrapper: (params, key) => this.setParamsWrapper(params, key)
+            addListener,
           })}
           screenProps={screenProps}
-        />
-        <Loading
-          isVisible={screenProps.showLoading}
-          mode="alipay"
-          overlayColor="#f2f2f2"
-          opacity={0.5}
         />
       </View>
     );

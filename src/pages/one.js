@@ -1,5 +1,5 @@
 /**
- * Created by dpcui on 29/11/2017.
+ * Created by dpcui on 11/04/2018.
  */
 
 import React, { Component } from 'react';
@@ -10,10 +10,6 @@ import {
   View,
   Button
 } from 'react-native';
-
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import LoginAction from '../actions/loginAction';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -31,23 +27,8 @@ class Login extends Component {
   toPage = () => {
     const { navigation } = this.props;
     if (navigation) {
-      navigation.navigate('Home');
+      navigation.navigate('TwoPage');
     }
-  };
-
-  loginExample = () => {
-    this.props.actions.doLogin(param)
-      .then(() => {
-        const { login } = this.props;
-        if (login.status === 'done') {
-          this.toPage();
-        } else {
-          Alert.alert(
-            '提示',
-            login.message
-          );
-        }
-      });
   };
 
   render() {
@@ -57,7 +38,7 @@ class Login extends Component {
           欢迎来到 Rax Template!
         </Text>
         <Text style={styles.instructions}>
-          进入src目录，开始开发自己的React Native App
+          进入src目录，开始开发自己的RaxAnyApp
         </Text>
         <Text style={styles.instructions}>
           {instructions}
@@ -92,16 +73,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => {
-  return {
-    login: state.loginReducer
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return ({
-    actions: bindActionCreators({ ...LoginAction }, dispatch)
-  });
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;

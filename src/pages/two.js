@@ -1,5 +1,5 @@
 /**
- * Created by dpcui on 29/11/2017.
+ * Created by dpcui on 11/04/2018.
  */
 
 import React, { Component } from 'react';
@@ -29,7 +29,7 @@ class Home extends Component{
           欢迎来到 Rax Template!
         </Text>
         <Text style={styles.instructions}>
-          进入src目录，开始开发自己的React Native App
+          进入src目录，开始开发自己的RaxAnyApp
         </Text>
         <Text style={styles.instructions}>
           {instructions}
