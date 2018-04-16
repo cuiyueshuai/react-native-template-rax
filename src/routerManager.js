@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import dismissKeyboard from 'react-native-dismiss-keyboard';
-import { StackNavigator, addNavigationHelpers } from 'react-navigation';
+import { StackNavigator, addNavigationHelpers, NavigationActions } from 'react-navigation';
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
 import DictStyle from './constants/globalStyle';
 import { stackConfig, stackNavigatorConfig } from './routerConfig';
@@ -39,10 +39,10 @@ class RouterManager extends Component {
   }
 
   onBackAndroid = () => {
-    const { navigationState } = this.props;
+    const { navigationState, dispatch } = this.props;
 
     if (navigationState.index > 0) {
-      this.props.navigation.goBack();
+      dispatch(NavigationActions.back());
       return true;
     } else { // eslint-disable-line
       if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {

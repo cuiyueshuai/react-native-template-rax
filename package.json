@@ -1,7 +1,7 @@
 {
-  "name": "react-native-template-rax",
-  "version": "1.0.4",
-  "description": "react native template of rax",
+  "name": "react-native-template-roany",
+  "version": "1.0.0",
+  "description": "react native template of roany",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

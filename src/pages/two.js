@@ -19,17 +19,17 @@ const instructions = Platform.select({
 
 class Home extends Component{
   static navigationOptions = {
-    title: 'Rax Template'
+    title: 'RoAny Template'
   };
 
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          欢迎来到 Rax Template!
+          欢迎来到 RoAny Template!
         </Text>
         <Text style={styles.instructions}>
-          进入src目录，开始开发自己的RaxAnyApp
+          进入src目录，开始开发自己的RoAnyApp
         </Text>
         <Text style={styles.instructions}>
           {instructions}
